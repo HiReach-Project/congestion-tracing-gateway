@@ -30,20 +30,21 @@ public class CongestionService {
 
         AtomicInteger congestion = new AtomicInteger(0);
 
-        nodeUrls.forEach((url) -> {
-            Integer nodeCongestion = webClient
-                    .get()
-                    .uri(url + "?lat=" + lat
-                            + "&lon=" + lon
-                            + "&radius=" + radius
-                            + "&key=" + apiGatewayKey
-                    )
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Integer>() {
-                    })
-                    .block();
-            congestion.set(congestion.get() + nodeCongestion);
-        });
+        nodeUrls.parallelStream()
+                .forEach((url) -> {
+                    Integer nodeCongestion = webClient
+                            .get()
+                            .uri(url + "?lat=" + lat
+                                    + "&lon=" + lon
+                                    + "&radius=" + radius
+                                    + "&key=" + apiGatewayKey
+                            )
+                            .retrieve()
+                            .bodyToMono(new ParameterizedTypeReference<Integer>() {
+                            })
+                            .block();
+                    congestion.set(congestion.get() + nodeCongestion);
+                });
 
         return congestion.get();
     }
