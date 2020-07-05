@@ -15,9 +15,12 @@ public class CongestionService {
     @Value("${api.gateway.key}")
     private String apiGatewayKey;
 
+    @Value("${server.ip}")
+    private String serverIp;
+
     private final List<String> nodeUrls = new ArrayList<>() {{
-        add("http://localhost:8091/hireach/api/congestion"); // HiReach
-        add("http://localhost:8092/upb/api/congestion"); // UPB
+        add("http://" + serverIp + ":8091/hireach/api/congestion"); // HiReach
+        add("http://" + serverIp + ":8092/hireach2/api/congestion"); // 2
     }};
 
     private final WebClient webClient;
