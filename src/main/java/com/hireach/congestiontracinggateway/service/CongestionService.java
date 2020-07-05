@@ -18,11 +18,6 @@ public class CongestionService {
     @Value("${server.ip}")
     private String serverIp;
 
-    private final List<String> nodeUrls = new ArrayList<>() {{
-        add("http://" + serverIp + ":8091/hireach/api/congestion"); // HiReach
-        add("http://" + serverIp + ":8092/hireach2/api/congestion"); // 2
-    }};
-
     private final WebClient webClient;
 
     public CongestionService(WebClient.Builder webClient) {
@@ -30,6 +25,10 @@ public class CongestionService {
     }
 
     public int getCongestion(double lat, double lon, double radius, Integer secondsAgo) {
+        List<String> nodeUrls = new ArrayList<>() {{
+            add("http://" + serverIp + ":8091/hireach/api/congestion"); // HiReach
+            add("http://" + serverIp + ":8092/hireach2/api/congestion"); // 2
+        }};
 
         AtomicInteger congestion = new AtomicInteger(0);
 
