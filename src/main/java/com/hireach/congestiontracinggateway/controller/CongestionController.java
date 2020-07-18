@@ -1,20 +1,16 @@
 package com.hireach.congestiontracinggateway.controller;
 
 import com.hireach.congestiontracinggateway.service.CongestionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
-
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class CongestionController {
 
     private final CongestionService congestionService;
-
-    public CongestionController(CongestionService congestionService) {
-        this.congestionService = Objects.requireNonNull(congestionService, "congestionService should not be null");
-    }
 
     @GetMapping(value = "/congestion")
     @ResponseStatus(HttpStatus.OK)

@@ -1,21 +1,25 @@
 package com.hireach.congestiontracinggateway;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import com.hireach.congestiontracinggateway.entity.Node;
+import com.hireach.congestiontracinggateway.repository.NodeRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
-import java.time.Instant;
-
-import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA3_256;
-
-//@SpringBootTest
+@SpringBootTest
 class CongestionTracingGatewayApplicationTests {
+
+    @Autowired
+    NodeRepository nodeRepository;
 
     @Test
     @Rollback(value = false)
     void contextLoads() {
-
+        Node node = new Node();
+        node.setName("name");
+        node.setUrl("rl");
+        nodeRepository.save(node);
     }
 
 }
