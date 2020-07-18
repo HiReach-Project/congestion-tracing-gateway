@@ -21,7 +21,7 @@ public class CongestionService {
 
     private final NodeRepository nodeRepository;
 
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
     public int getCongestion(double lat, double lon, double radius, Integer secondsAgo) {
         List<String> nodeUrls = nodeRepository.findAll()
@@ -34,7 +34,8 @@ public class CongestionService {
         nodeUrls.parallelStream()
                 .forEach((url) -> {
                     try {
-                        Integer nodeCongestion = webClient
+                        Integer nodeCongestion = webClientBuilder
+                                .build()
                                 .get()
                                 .uri(url + "?lat=" + lat
                                         + "&lon=" + lon

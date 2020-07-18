@@ -7,7 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableCaching
-@ComponentScan("com.giffing.bucket4j")
 public class CongestionTracingGatewayApplication {
 
     public static void main(String[] args) {

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
-@SpringBootTest
+//@SpringBootTest
 class CongestionTracingGatewayApplicationTests {
 
     @Autowired
@@ -16,10 +16,7 @@ class CongestionTracingGatewayApplicationTests {
     @Test
     @Rollback(value = false)
     void contextLoads() {
-        Node node = new Node();
-        node.setName("name");
-        node.setUrl("rl");
-        nodeRepository.save(node);
+
     }
 
 }
