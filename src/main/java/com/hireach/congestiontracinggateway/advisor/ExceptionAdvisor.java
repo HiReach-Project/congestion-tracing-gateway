@@ -14,7 +14,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -80,7 +79,7 @@ public class ExceptionAdvisor extends ResponseEntityExceptionHandler {
         return ex.getConstraintViolations()
                 .stream()
                 .map(violation -> {
-                    String parameterName = ((PathImpl)violation.getPropertyPath()).getLeafNode().getName();
+                    String parameterName = ((PathImpl) violation.getPropertyPath()).getLeafNode().getName();
                     return parameterName + " " + violation.getMessage();
                 })
                 .collect(Collectors.joining(", "));
