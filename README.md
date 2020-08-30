@@ -43,7 +43,7 @@ congestion_tracing_gateway
 All API requests require the use of an API key.
 To authenticate an API request, you should append your API key as a GET parameter.
 ```http
-GET /api/congestion/?key=1234567890
+GET /api/congestion?key=1234567890
 ```
 **Note**: for security reasons there is NO default api key added in the database. For testing the API, a hashed key must be manually added,
  after running the container, as a SHA3_256 encoded string into the `company` table.  
