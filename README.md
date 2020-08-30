@@ -9,6 +9,8 @@ Multiple companies are using the [congestion tracing API](https://github.com/HiR
 but they want to keep their users location data in their own private database and only share congestion data.
 Users who have access to the API Gateway can request data about congestion in a certain point defined by latitude and longitude.
 The gateway then calls every node and aggregates the data from all companies and returns a more accurate response.
+##High-level architecture diagram
+![gateway-diagram](https://user-images.githubusercontent.com/34125719/91662544-d6ca0780-eaeb-11ea-9172-f19055a2410d.png)
 ## Installation
 ### Postgres database
 Tested with: PostgreSQL 12.2
@@ -29,7 +31,12 @@ docker build -t congestion_tracing_gateway .
 ```
 Run container:
 ```bash
-docker run --network=host congestion_tracing_gateway
+docker run --network=host \
+-e SERVER_PORT=8080 \
+-e SPRING_DATASOURCE_USERNAME=database_owner \
+-e SPRING_DATASOURCE_PASSWORD=database_owner_password \
+-e SPRING_DATASOURCE_URL=jdbc:postgresql://your_database_server_url:5432/database_name \
+congestion_tracing_gateway
 ```
 # API specification
 ## Authorization
@@ -38,10 +45,17 @@ To authenticate an API request, you should append your API key as a GET paramete
 ```http
 GET /api/congestion/?key=1234567890
 ```
+**Note**: for security reasons there is NO default api key added in the database. For testing the API, a hashed key must be manually added,
+ after running the container, as a SHA3_256 encoded string into the `company` table.  
+ The hash can be obtained easily from [here](https://md5calc.com/hash/sha3-256/1234567890).  
+ Example adding the SHA3_256 encoded hash of `1234567890` key in the database:
+```sql
+insert into company values(1, 'your_company_name', '01da8843e976913aa5c15a62d45f1c9267391dcbd0a76ad411919043f374a163');
+```
 ## Endpoints
 ### Get congestion
 ```http
-GET /api/congestion/?key=1234567890&lat=44.348732&lon=26.104334&radius=10
+GET /api/congestion?key=1234567890&lat=44.348732&lon=26.104334&radius=10
 ```
 *  **URL Params**
 
@@ -57,7 +71,7 @@ GET /api/congestion/?key=1234567890&lat=44.348732&lon=26.104334&radius=10
 
     **Sample call:**
     ```shell script
-    curl --request GET http://localhost:8080/api/congestion/?key=1234567890&lat=44.348732&lon=26.104334&radius=12.5&seconds_ago=45
+    curl --request GET 'http://localhost:8080/api/congestion?key=1234567890&lat=44.348732&lon=26.104334&radius=12.5&seconds_ago=45'
     ```
    **Success Response:**
         
@@ -66,59 +80,13 @@ GET /api/congestion/?key=1234567890&lat=44.348732&lon=26.104334&radius=10
     The response is an integer representing the total number of devices being inside the perimeter of a circle
     of radius `12.5` meters and the center at `44.348732, 26.104334` which posted their location data (`lat`, `lon`) in the past 45 seconds.
 
-   **Error Response:**
-      
-    **Code:** 403 FORBIDDEN <br />
-    **Content:**   
-    ```json
-    {
-        "timestamp": "1595662694514",
-        "status": 403,
-        "error": "Forbidden",
-        "message": "",
-        "path": "/api/congestion"
-    }
-    ```
-    **Code:** 429 TOO MANY REQUESTS <br />
-    **Content:**   
-    ```json
-    {
-        "timestamp": 1595665040720,
-        "status": 429,
-        "error": "Too Many Requests",
-        "message": "You have exhausted the API Request Quota.",
-        "path": "/api/congestion"
-    }
-    ```
-    **Code:** 400 BAD REQUEST <br />
-    **Content:**   
-    ```json
-    {
-        "timestamp": 1595662694514,
-        "status": 400,
-        "error": "Bad Request",
-        "message": "radius should be of type double",
-        "path": "/api/congestion"
-    }
-    ```
-    **Code:** 500 INTERNAL SERVER ERROR <br />
-    **Content:**   
-    ```json
-    {
-        "timestamp": 1595663467680,
-        "status": 500,
-        "error": "Internal Server Error",
-        "message": "Oops! Something went wrong on our side.",
-        "path": "/api/congestion"
-    }
-   ```
    
 ### Get nodes
 A node is an instance of [congestion tracing API](https://github.com/HiReach-Project/congestion-tracing-standalone)
 running on a certain company server. You can either call directly the `/congestion` endpoint which aggregates the congestion data from all nodes
 or get all nodes urls and call them individually. You can store the node urls and call them directly in case the API Gateway is down.
 ```http
-GET /api/nodes/?key=1234567890
+GET /api/nodes?key=1234567890
 ```
 *  **URL Params**
 
@@ -127,7 +95,7 @@ GET /api/nodes/?key=1234567890
    
     **Sample call:**
     ```shell script
-    curl --request GET http://localhost:8080/api/nodes/?key=1234567890
+    curl --request GET 'http://localhost:8080/api/nodes?key=1234567890'
     ```
    **Success Response:**
         
@@ -145,49 +113,48 @@ GET /api/nodes/?key=1234567890
         }
     ]
     ```
-   **Error Response:**
-      
-    **Code:** 403 FORBIDDEN <br />
-    **Content:**   
-    ```json
-    {
-        "timestamp": "1595662694514",
-        "status": 403,
-        "error": "Forbidden",
-        "message": "",
-        "path": "/api/nodes"
-    }
-    ```
-    **Code:** 429 TOO MANY REQUESTS <br />
-    **Content:**   
-    ```json
-    {
-        "timestamp": 1595665040720,
-        "status": 429,
-        "error": "Too Many Requests",
-        "message": "You have exhausted the API Request Quota.",
-        "path": "/api/nodes"
-    }
-    ```
-    **Code:** 400 BAD REQUEST <br />
-    **Content:**   
-    ```json
-    {
-        "timestamp": 1595662694514,
-        "status": 400,
-        "error": "Bad Request",
-        "message": "lon should be of type double",
-        "path": "/api/nodes"
-    }
-    ```
-    **Code:** 500 INTERNAL SERVER ERROR <br />
-    **Content:**   
-    ```json
-    {
-        "timestamp": 1595663467680,
-        "status": 500,
-        "error": "Internal Server Error",
-        "message": "Oops! Something went wrong on our side.",
-        "path": "/api/nodes"
-    }
-   ```
+## Error Responses 
+**Code:** 400 BAD REQUEST  
+**Content:**   
+```json
+{
+    "timestamp": "2020-08-22T13:21:05.045562Z",
+    "status": 400,
+    "error": "Bad Request",
+    "message": "lon should be of type double",
+    "path": "/api/nodes"
+}
+``` 
+**Code:** 403 FORBIDDEN  
+**Content:**   
+```json
+{
+    "timestamp": "2020-08-22T13:21:05.045562Z",
+    "status": 403,
+    "error": "Forbidden",
+    "message": "",
+    "path": "/api/nodes"
+}
+```
+**Code:** 429 TOO MANY REQUESTS  
+**Content:**   
+```json
+{
+    "timestamp": "2020-08-22T13:21:05.045562Z",
+    "status": 429,
+    "error": "Too Many Requests",
+    "message": "You have exhausted the API Request Quota.",
+    "path": "/api/nodes"
+}
+```
+**Code:** 500 INTERNAL SERVER ERROR  
+**Content:**   
+```json
+{
+    "timestamp": "2020-08-22T13:21:05.045562Z",
+    "status": 500,
+    "error": "Internal Server Error",
+    "message": "Oops! Something went wrong on our side.",
+    "path": "/api/nodes"
+}
+```
