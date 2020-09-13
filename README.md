@@ -5,10 +5,10 @@ This API Gateway is build to make it possible for multiple companies to share co
 The more companies who contribute with location data the more accurate the congestion data will be.  
 A running instance on a company's private server is referred to as a `node` in the context of this API.
 ##### How it works:
-Multiple companies are using the [congestion tracing API](https://github.com/HiReach-Project/congestion-tracing-standalone)
+Multiple companies are using the [Congestion API](https://github.com/HiReach-Project/congestion-tracing-standalone)
 but they want to keep their users location data in their own private database and only share congestion data.
 Users who have access to the API Gateway can request data about congestion in a certain point defined by latitude and longitude.
-The gateway then calls every node and aggregates the data from all companies and returns a more accurate response.
+The gateway then calls every node and aggregates the data from all companies and returns a more accurate response.  
 ##High-level architecture diagram
 ![gateway-diagram](https://user-images.githubusercontent.com/34125719/91662544-d6ca0780-eaeb-11ea-9172-f19055a2410d.png)
 ## Installation
@@ -82,7 +82,7 @@ GET /api/congestion?key=1234567890&lat=44.348732&lon=26.104334&radius=10
 
    
 ### Get nodes
-A node is an instance of [congestion tracing API](https://github.com/HiReach-Project/congestion-tracing-standalone)
+A node is an instance of the [Congestion API](https://github.com/HiReach-Project/congestion-tracing-standalone)
 running on a certain company server. You can either call directly the `/congestion` endpoint which aggregates the congestion data from all nodes
 or get all nodes urls and call them individually. You can store the node urls and call them directly in case the API Gateway is down.
 ```http
