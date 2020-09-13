@@ -1,5 +1,5 @@
 # Congestion API Gateway
-This is a REST API gateway built to aggregate data from multiple [congestion APIs](https://github.com/HiReach-Project/congestion-tracing-standalone).
+This is a REST API gateway built to aggregate data from multiple [Congestion APIs](https://github.com/HiReach-Project/congestion-tracing-standalone).
 The congestion API is more accurate when the user base is larger.
 This API Gateway is build to make it possible for multiple companies to share congestion data while keeping their data in their own private database.
 The more companies who contribute with location data the more accurate the congestion data will be.  
