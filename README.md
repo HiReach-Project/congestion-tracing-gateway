@@ -9,7 +9,7 @@ Multiple companies are using the [Congestion API](https://github.com/HiReach-Pro
 but they want to keep their users location data in their own private database and only share congestion data.
 Users who have access to the API Gateway can request data about congestion in a certain point defined by latitude and longitude.
 The gateway then calls every node and aggregates the data from all companies and returns a more accurate response.  
-##High-level architecture diagram
+## High-level architecture diagram
 ![gateway-diagram](https://user-images.githubusercontent.com/34125719/91662544-d6ca0780-eaeb-11ea-9172-f19055a2410d.png)
 ## Installation
 ### Postgres database
